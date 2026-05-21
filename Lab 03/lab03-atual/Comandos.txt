@@ -1,0 +1,3 @@
+Comando para saida no terminal 
+
+ ./compilador gramatica-9/gramatica.conf gramatica-9/tabela_lr01.conf ins/0-retorna_soma_int.params < ins/0-retorna_soma_int.tokens
