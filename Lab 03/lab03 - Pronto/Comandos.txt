@@ -1,0 +1,35 @@
+===============================================================================
+                    COMANDOS - LABORATÓRIO 03 
+                      Linguagem: Java SE 14
+===============================================================================
+-------------------------------------------------------------------------------
+1. COMPILAÇÃO DO ANALISADOR LÉXICO (JAVA)
+-------------------------------------------------------------------------------
+
+Comandos:
+  javacc solucao.jj
+  javac *.java
+
+-------------------------------------------------------------------------------
+2. FASE 1: GERAÇÃO DOS ARQUIVOS DE TOKENS (.tokens)
+-------------------------------------------------------------------------------
+   Comando:
+     java JavaSE14 < ins/0-retorna_soma_int.java > ins/0-retorna_soma_int.tokens
+
+-------------------------------------------------------------------------------
+3. FASE 2: EXECUÇÃO DO COMPILADOR E GERAÇÃO DOS RESULTADOS (.saida)
+-------------------------------------------------------------------------------
+Essa parte vamos criar as arvores e mostrar os resultados dos calculos, 
+
+   Caso 1: Teste Válido com parâmetros (Ex: Soma Inteira)
+   Comando:
+     ./compilador gramatica-9/gramatica.conf gramatica-9/tabela_lr1.conf ins/0-retorna_soma_int.params < ins/0-retorna_soma_int.tokens &> ins/0-retorna_soma_int.saida
+
+   Caso 2: Teste Válido sem parâmetros / parâmetros vazios (Ex: Bloco Aninhado)
+   Comando:
+     ./compilador gramatica-9/gramatica.conf gramatica-9/tabela_lr1.conf ins/3-bloco_aninhado.params < ins/3-bloco_aninhado.tokens &> ins/3-bloco_aninhado.saida
+
+   Caso 3: Testando um caso de Erro Semântico para ver a mensagem de rejeição
+   Comando:
+     ./compilador gramatica-9/gramatica.conf gramatica-9/tabela_lr1.conf ins/e1-retorno_float_em_int.params < ins/e1-retorno_float_em_int.tokens &> ins/e1-retorno_float_em_int.saida
+
