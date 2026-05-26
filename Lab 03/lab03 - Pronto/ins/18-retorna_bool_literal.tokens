@@ -1,0 +1,16 @@
+CLASS class
+ID Principal
+LBRACE {
+PUBLIC public
+STATIC static
+BOOLEAN boolean
+ID verdadeiro
+LPAR (
+RPAR )
+LBRACE {
+RETURN return
+TRUE true
+SEMICOLON ;
+RBRACE }
+RBRACE }
+$ $
