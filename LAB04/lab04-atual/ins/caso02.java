@@ -1,0 +1,7 @@
+class Principal {
+    public static int main() {
+        int x;
+        int y;
+        x = 10 + obterFator(y);
+    }
+}

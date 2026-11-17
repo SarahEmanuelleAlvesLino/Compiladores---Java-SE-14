@@ -1,0 +1,13 @@
+class Principal {
+    public static boolean validarFluxo(int status) {
+        int estadoAtual;
+        estadoAtual = status;
+        while (verificarStatus(estadoAtual)) {
+            if (!validarToken(gerarToken())) {
+                estadoAtual = atualizar(estadoAtual, falha());
+            } else {
+                return proximaEtapa();
+            }
+        }
+    }
+}

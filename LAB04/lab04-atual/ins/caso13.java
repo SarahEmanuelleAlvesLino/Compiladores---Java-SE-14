@@ -1,0 +1,14 @@
+class Principal {
+    public static float simular(int passos) {
+        int contadorPassos;
+        contadorPassos = passos;
+        while (contadorPassos > obterMinimo()) {
+            if (checarCondicao(contadorPassos + calcularDelta())) {
+                contadorPassos = contadorPassos - extrairPasso();
+            } else {
+                contadorPassos = contadorPassos / aplicarFator(obterDivisor(contadorPassos), retornarInercia());
+            }
+        }
+        return obterResultadoFinal();
+    }
+}

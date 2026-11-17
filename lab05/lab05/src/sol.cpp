@@ -1,0 +1,191 @@
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <map>
+#include <stack>
+using namespace std;
+
+#include "Gramatica.hpp"
+#include "TabelaLR1.hpp"
+#include "Arvore.hpp"
+#include "Parser.hpp"
+#include "Funcao.hpp"
+#include "Analisador.hpp"
+#include "FrameFuncao.hpp"
+#include "Tree/Stm.hpp"
+#include "Tree/StmSeq.hpp"
+#include "Tree/StmLabel.hpp"
+
+int main(int argc, char *argv[])
+{
+  if (argc != 3 && argc != 4 && argc != 1)
+  {
+    cerr << "Parametros nomes dos arquivos: 1) csv com gramatica, 2) csv com tabela LR1, opcional: 3) arquivo com parametros" << endl;
+    return 1;
+  }
+  string nome_gramatica, nome_tab_lr1;
+  if (argc == 1)
+  {
+    nome_gramatica = string("gramatica.conf");
+    nome_tab_lr1 = string("tabela_lr1.conf");
+  }
+  else
+  {
+    nome_gramatica = string(argv[1]);
+    nome_tab_lr1 = string(argv[2]);
+  }
+
+  ifstream arq_gramatica(nome_gramatica);
+  ifstream arq_tabela_lr1(nome_tab_lr1);
+  if (arq_tabela_lr1.fail() || arq_gramatica.fail())
+  {
+    cerr << "Falha ao abrir arquivos: " << ((arq_gramatica.fail()) ? nome_gramatica : "") << ", " << ((arq_tabela_lr1.fail()) ? nome_tab_lr1 : "") << endl;
+    return 1;
+  }
+  Parser parser(arq_gramatica, arq_tabela_lr1);
+  parser.tabela.debug();
+  parser.gram.debug();
+
+  Arvore_parse arv = parser.executa_parse(cin);
+  cerr << "Parse executado" << endl;
+  arv.debug();
+
+  vector<Funcao *> todas_funcoes = Funcao::extrai_todas_funcoes(arv.raiz);
+  map<string, Funcao *> tabela_funcoes;
+  for (size_t i = 0; i < todas_funcoes.size(); ++i)
+  {
+    Funcao *f = todas_funcoes[i];
+    if (f != NULL && f->nome_funcao != NULL)
+    {
+      tabela_funcoes[f->nome_funcao->nome] = f;
+    }
+  }
+
+  Funcao *func = Funcao::extrai_funcao(arv.raiz);
+  if (func == NULL)
+  {
+    cerr << "Erro: Nao foi possivel extrair a funcao da arvore de parse" << endl;
+    return 1;
+  }
+  func->debug();
+
+  vector<ValorLiteral> parametros_passados;
+  if (argc >= 4)
+  {
+    ifstream arq_params(argv[3]);
+    if (arq_params.fail())
+    {
+      cerr << "Falha ao abrir arquivo de parametros: " << argv[3] << endl;
+      return 1;
+    }
+    string linha;
+    size_t param_idx = 0;
+    while (getline(arq_params, linha))
+    {
+      if (!linha.empty() && linha.back() == '\r')
+      {
+        linha.pop_back();
+      }
+      if (linha.empty())
+        continue;
+      if (param_idx >= func->parametros.size())
+      {
+        cerr << "Erro semantico: Mais parametros fornecidos no arquivo do que o esperado pela funcao" << endl;
+        return 1;
+      }
+      Variavel *param_var = func->parametros[param_idx];
+      ValorLiteral val;
+      val.tipo = param_var->tipo;
+      if (param_var->tipo->valor == Tipo::INT)
+      {
+        val.valor_int = atoi(linha.c_str());
+      }
+      else if (param_var->tipo->valor == Tipo::FLOAT)
+      {
+        val.valor_float = atof(linha.c_str());
+      }
+      else if (param_var->tipo->valor == Tipo::BOOL)
+      {
+        val.valor_bool = (linha == "true" || linha == "1" || linha == "TRUE" || linha == "True");
+      }
+      parametros_passados.push_back(val);
+      param_idx++;
+    }
+    if (param_idx < func->parametros.size())
+    {
+      cerr << "Erro semantico: Menos parametros fornecidos no arquivo do que o esperado pela funcao" << endl;
+      return 1;
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < func->parametros.size(); ++i)
+    {
+      Variavel *param_var = func->parametros[i];
+      ValorLiteral val;
+      val.tipo = param_var->tipo;
+      if (param_var->tipo->valor == Tipo::INT)
+      {
+        val.valor_int = (i + 1) * 10;
+      }
+      else if (param_var->tipo->valor == Tipo::FLOAT)
+      {
+        val.valor_float = (i + 1) * 10.0f;
+      }
+      else if (param_var->tipo->valor == Tipo::BOOL)
+      {
+        val.valor_bool = true;
+      }
+      parametros_passados.push_back(val);
+    }
+  }
+
+  Analisador analis;
+  ValorLiteral ret = analis.calcula_retorno(func, parametros_passados, tabela_funcoes);
+  cerr << "Retorno calculado:" << endl;
+  cerr << ret.como_string() << endl;
+
+  FrameFuncao *frame = FrameFuncao::gera_frame_de_funcao(func);
+
+  if (frame == NULL)
+  {
+    cerr << "Erro: Nao foi possivel gerar o frame da funcao." << endl;
+    return 1;
+  }
+
+  frame->imprime();
+
+  cerr << endl
+       << " - Codigo intermediario (IR):" << endl;
+
+  string nome_da_funcao = func->nome_funcao->nome;
+
+  int contador_labels = 1;
+  vector<Stm *> stms_funcao;
+  for (size_t i = 0; i < func->comandos.size(); ++i)
+  {
+    stms_funcao.push_back(Stm::gera_Stm_de_Comando(func->comandos[i], frame, contador_labels, nome_da_funcao));
+  }
+
+  Stm *raiz_ir = NULL;
+  for (int i = (int)stms_funcao.size() - 1; i >= 0; --i)
+  {
+    if (stms_funcao[i] == NULL)
+      continue;
+    raiz_ir = (raiz_ir == NULL) ? stms_funcao[i] : StmSeq::gera_Stm_Seq(stms_funcao[i], raiz_ir);
+  }
+
+  Stm *label_fim = StmLabel::gera_Stm_Label(nome_da_funcao + "_return");
+  raiz_ir = (raiz_ir == NULL) ? label_fim : StmSeq::gera_Stm_Seq(raiz_ir, label_fim);
+
+  if (raiz_ir != NULL)
+  {
+    raiz_ir->imprime();
+    cout << endl;
+  }
+
+  return 0;
+}

@@ -1,0 +1,114 @@
+===============================================================================
+                    COMANDOS - LABORATÓRIO 05 DE COMPILADORES
+                              Linguagem: Java SE 14
+===============================================================================
+
+Este arquivo explica, passo a passo e do zero, como gerar o analisador léxico,
+gerar os arquivos de entrada (.in) e compilar/rodar o conversor para
+representação intermediária (IR).
+-------------------------------------------------------------------------------
+0. ESTRUTURA DE PASTAS (leia antes de rodar qualquer coisa)
+-------------------------------------------------------------------------------
+
+  solucao.jj           -> gramática JavaCC do analisador léxico (lab03).
+  JavaSE14.java         -> lexer já gerado pelo JavaCC a partir do solucao.jj
+                          
+  src/                 -> código-fonte C++ do compilador (parser, frame,
+                          geração de IR).
+  gramatica-9/         -> gramatica.conf (gramática LR(1) da linguagem) e
+                          tabela_lr1.conf (tabela de parsing já gerada).
+  ins/                 -> os 30 casos de teste pedidos no enunciado já 
+                          traduzidos do C para java.
+                          Para cada caso "X" existem os arquivos:
+                            X.java    -> nosso código-fonte 
+                            X.in      -> saída da fase léxica 
+                            X.params  -> parâmetros de entrada da função
+                            X.tokens  -> igual ao X.in
+                            X.saida   -> saída completa já gerada (parser +
+                                         frame + IR), guardada para conferência
+  Codigo C/            -> os programas ".c" originais.Estão aqui só como 
+                          referência/prova da tradução, não são usados 
+                          pelo compilador.
+  Casos_ins_Extras/    -> casos de teste ADICIONAIS, além dos 30 pedidos no
+                          enunciado. Não são obrigatórios, mas foram deixados
+                          aqui para reforçar que o compilador cobre mais
+                          casos do que o mínimo pedido. Seguem o mesmo padrão
+                          de arquivos (.java/.in/.params/.saida) da pasta ins/.
+
+-------------------------------------------------------------------------------
+1. GERAR O ANALISADOR LÉXICO (JavaCC)
+-------------------------------------------------------------------------------
+  Gerar o lexer a partir da gramática:
+    javacc solucao.jj
+
+  Compilar os .java gerados:
+    javac *.java
+
+-------------------------------------------------------------------------------
+2. GERAR O ARQUIVO .in DE UM CASO DE TESTE (saída da fase léxica)
+-------------------------------------------------------------------------------
+
+  Comando (roda o lexer sobre o código-fonte e salva o resultado em .in):
+    java JavaSE14 < ins/X.java > ins/X.in
+
+  Exemplo com o caso 10:
+    java JavaSE14 < ins/10.java > ins/10.in
+
+
+-------------------------------------------------------------------------------
+3. COMPILAR O CONVERSOR PARA REPRESENTAÇÃO INTERMEDIÁRIA (C++)
+-------------------------------------------------------------------------------
+
+  make clean && make
+
+-------------------------------------------------------------------------------
+4. RODAR UM CASO E GERAR O .saida (parser + frame + IR, tudo junto)
+-------------------------------------------------------------------------------
+
+  Usando o make:
+    make run PARAMS="ins/10.params" < ins/10.in &> ins/10.saida
+
+  Ou chamando o compilador direto:
+    ./compilador gramatica-9/gramatica.conf gramatica-9/tabela_lr1.conf \
+        ins/10.params < ins/10.in &> ins/10.saida
+
+-------------------------------------------------------------------------------
+5. RODAR UM CASO MOSTRANDO SÓ O CÓDIGO IR NO TERMINAL (sem o resto do debug)
+-------------------------------------------------------------------------------
+
+  make run PARAMS="ins/10.params" < ins/10.in 2>/dev/null
+
+  Sem parâmetros:
+    make run < ins/6.in 2>/dev/null
+
+
+-------------------------------------------------------------------------------
+6. RODAR TODOS OS CASOS DE UMA VEZ, COM TÍTULO ENTRE UM E OUTRO
+-------------------------------------------------------------------------------
+
+  Mostrando só o IR de todos os casos da pasta ins/, com título antes de cada:
+
+    for f in ins/*.java; do
+      n=$(basename "$f" .java)
+      echo "- Representação IR - Caso $n.java "
+      if [ -f "ins/$n.params" ]; then
+        make -s run PARAMS="ins/$n.params" < "ins/$n.in" 2>/dev/null
+      else
+        make -s run < "ins/$n.in" 2>/dev/null
+      fi
+      echo
+    done
+
+-------------------------------------------------------------------------------
+7. REGERAR TODOS OS .saida DE UMA VEZ (parser + frame + IR completos)
+-------------------------------------------------------------------------------
+
+  for f in ins/*.java; do
+    n=$(basename "$f" .java)
+    if [ -f "ins/$n.params" ]; then
+      make -s run PARAMS="ins/$n.params" < "ins/$n.in" &> "ins/$n.saida"
+    else
+      make -s run < "ins/$n.in" &> "ins/$n.saida"
+    fi
+  done
+

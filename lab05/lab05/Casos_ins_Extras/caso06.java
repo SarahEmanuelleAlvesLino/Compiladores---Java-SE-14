@@ -1,0 +1,11 @@
+class Principal {
+    public static boolean avaliar(int x) {
+        int localX;
+        localX = x;
+        if (checar(localX) < limite()) {
+            return verificarAtalho(localX);
+        } else {
+            localX = localX * recalcular(localX);
+        }
+    }
+}

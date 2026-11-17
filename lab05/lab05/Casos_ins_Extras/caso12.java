@@ -1,0 +1,15 @@
+class Principal {
+    public static int checarSensor(float leitura) {
+        float copiaLeitura;
+        copiaLeitura = leitura;
+        if (calibrar(copiaLeitura) == obterAlvo()) {
+            if (dispararAlarme()) {
+                return 1;
+            }
+        }
+        if (!estaPronto() < limiteCritico()) {
+            copiaLeitura = lerSegundaOpcao(copiaLeitura * ajustar());
+        }
+        return verificarSistema();
+    }
+}

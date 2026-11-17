@@ -1,0 +1,6 @@
+class Principal {
+    public static int formula(int base) {
+        int res;
+        res = !estaVazio() + (calcular(base) * obterMultiplicador(ajustar(base)));
+    }
+}

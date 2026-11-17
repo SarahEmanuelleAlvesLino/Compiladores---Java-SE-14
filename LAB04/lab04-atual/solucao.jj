@@ -1,0 +1,302 @@
+PARSER_BEGIN(JavaSE14)
+
+import java.io.*;
+import java.io.IOException;
+
+public class JavaSE14{
+    public static void main(String[] args) throws ParseException,IOException{
+        JavaSE14 lexical = new JavaSE14(System.in);
+        lexical.Input();
+    }
+}
+
+PARSER_END(JavaSE14)
+
+SKIP:{
+    //Espaço em Branco
+    " " | "\t" | "\n" | "\r" | "\f" 
+    |
+    //comentario linha unica e em bloco
+    < "//" (~["\n", "\r"])* ("\n" | "\r\n" | "\r")>
+    |
+    < "//" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/" > 
+}
+
+TOKEN : {
+    // Keywords
+      < ABSTRACT: "abstract">
+    | < ASSERT: "assert">
+    | < BOOLEAN: "boolean" >
+    | < BREAK: "break" >
+    | < BYTE: "byte" >
+    | < CASE: "case" >
+    | < CATCH: "catch" >
+    | < CHAR:  "char" >
+    | < CLASS: "class" >
+    | < CONST: "const" >
+    | < CONTINUE: "continue" >
+    | < _DEFAULT: "default" >
+    | < DO: "do" >
+    | < DOUBLE: "double" >
+    | < ELSE: "else" >
+    | < ENUM: "enum" >
+    | < EXTENDS: "extends" >
+    | < FINAL: "final" >
+    | < FINALLY: "finally" >
+    | < FLOAT: "float" >
+    | < FOR: "for" >
+    | < IF: "if" >
+    | < GOTO: "goto" >
+    | < IMPLEMENTS: "implements" >
+    | < IMPORT: "import" >
+    | < INSTANCEOF: "instanceof" >
+    | < INT: "int" >
+    | < INTERFACE: "interface" >
+    | < LONG: "long" >
+    | < NATIVE: "native" >
+    | < NEW: "new" >
+    | < PACKAGE: "package" >
+    | < PRIVATE: "private" >
+    | < PROTECTED: "protected" >
+    | < PUBLIC: "public" >
+    | < RETURN: "return" >
+    | < SHORT: "short" >
+    | < STATIC: "static" >
+    | < STRICTFP: "strictfp" >
+    | < SUPER: "super" >
+    | < SWITCH: "switch" >
+    | < SYNCHRONIZED: "synchronized" >
+    | < THIS: "this" >
+    | < THROW: "throw" >
+    | < THROWS: "throws" >
+    | < TRANSIENT: "transient" >
+    | < TRY: "try" >
+    | < VOID: "void" >
+    | < VOLATILE: "volatile" >
+    | < WHILE: "while" >
+    | < YIELD: "yield" >
+}
+
+TOKEN : {
+    //Literais booleanos e nulos
+      < TRUE: "true" >
+    | < FALSE:  "false" >
+    | < NULL: "null" >
+}
+
+TOKEN : {
+    // Diferenciar as Classes das Variáveis
+    < CLASS_TYPE: "Ponto_t" | "Triangulo_t" | "Ponto_2d_t" | "Ponto_3d_t" | "Segmento_2d_t" | "Segmento_3d_t" >
+}
+
+TOKEN : {
+    // Identificadores
+    < ID: ["A"-"Z", "a"-"z", "_", "$"] (["A"-"Z", "a"-"z", "0"-"9", "_", "$"])* >
+}
+
+TOKEN : {
+    // Literais Numéricos
+      < DECIMAL: (["0"-"9"])+ >
+    | < HEXADECIMAL: "0" ["x", "X"] (["0"-"9", "a"-"f", "A"-"F"])+ >
+    | < OCTAL: "0" (["0"-"7"])+ >
+    | < BINARY: "0" ["b", "B"] (["0", "1"])+ >
+    | < FLOAT_LITERAL:
+            (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+          | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+          | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+          | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+          // Corrigido Hexa float
+          | "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ "." (["0"-"9","a"-"f","A"-"F"])* <HEX_EXPONENT> (["f","F","d","D"])?
+          | "0" ["x","X"] "." (["0"-"9","a"-"f","A"-"F"])+ <HEX_EXPONENT> (["f","F","d","D"])?
+          | "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ <HEX_EXPONENT> (["f","F","d","D"])?
+      >
+    | < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+    | < #HEX_EXPONENT: ["p","P"] (["+","-"])? (["0"-"9"])+ >
+}
+
+TOKEN : {
+    // Literais de String e Caractere
+      < STRING: "\"" (~["\"", "\\", "\n", "\r"] | "\\" ~[])* "\"" >
+    | < CHAR_LITERAL: "'" (~["'", "\\", "\n", "\r"] | "\\" ~[]) "'" >
+}
+
+TOKEN : {
+    // Operadores
+      < ASSIGN: "=" >
+    | < PLUS: "+" >
+    | < MINUS: "-" >
+    | < STAR: "*" >
+    | < SLASH: "/" >
+    | < MOD: "%" >
+    | < EQ: "==" >
+    | < NEQ: "!=" >
+    | < GT: ">" >
+    | < LT: "<" >
+    | < GEQ: ">=" >
+    | < LEQ: "<=" >
+    | < LOGIC_AND: "&&" >
+    | < LOGIC_OR: "||" >
+    | < EXCLAMATION: "!" >
+    | < TILDE: "~" >
+    | < QUESTION: "?" >
+    | < COLON: ":" >
+    | < PLUS_ASSIGN: "+=" >
+    | < MINUS_ASSIGN: "-=" >
+    | < STAR_ASSIGN: "*=" >
+    | < SLASH_ASSIGN: "/=" >
+    | < MOD_ASSIGN: "%=" >
+    | < BIT_AND: "&" >
+    | < BIT_OR: "|" >
+    | < BIT_XOR: "^" >
+    | < BIT_AND_ASSIGN: "&=" >
+    | < BIT_OR_ASSIGN: "|=" >
+    | < BIT_XOR_ASSIGN: "^=" >
+    | < LSHIFT: "<<" >
+    | < RSHIFT: ">>" >
+    | < URSHIFT: ">>>" >
+    | < LSHIFT_ASSIGN: "<<=" >
+    | < RSHIFT_ASSIGN: ">>=" >
+    | < URSHIFT_ASSIGN: ">>>=" >
+    | < INC: "++" >
+    | < DEC: "--" >
+    | < ARROW: "->" >
+}
+
+TOKEN : {
+    // Separadores
+      < LPAR: "(" >
+    | < RPAR: ")" >
+    | < LBRACE: "{" >
+    | < RBRACE: "}" >
+    | < LBRACK: "[" >
+    | < RBRACK: "]" >
+    | < SEMICOLON: ";" >
+    | < COMMA: "," >
+    | < DOT: "." >
+    | < VARARGS: "..." >
+    | < AT: "@" >
+    | < DOBL_COLON: "::" >
+}
+
+
+
+void Input() : {Token t;}
+{
+    (
+          t = <ABSTRACT> {System.out.println("ABSTRACT " + t.image);}
+        | t = <ASSERT> {System.out.println("ASSERT " + t.image);}
+        | t = <BOOLEAN> {System.out.println("BOOLEAN " + t.image);}
+        | t = <BREAK> {System.out.println("BREAK " + t.image);}
+        | t = <BYTE> {System.out.println("BYTE " + t.image);}
+        | t = <CASE> {System.out.println("CASE " + t.image);}
+        | t = <CATCH> {System.out.println("CATCH " + t.image);}
+        | t = <CHAR> {System.out.println("CHAR " + t.image);}
+        | t = <CLASS> {System.out.println("CLASS " + t.image);}
+        | t = <CONST> {System.out.println("CONST " + t.image);}
+        | t = <CONTINUE> {System.out.println("CONTINUE " + t.image);}
+        | t = <_DEFAULT> {System.out.println("DEFAULT " + t.image);}
+        | t = <DO> {System.out.println("DO " + t.image);}
+        | t = <DOUBLE> {System.out.println("DOUBLE " + t.image);}
+        | t = <ELSE> {System.out.println("ELSE " + t.image);}
+        | t = <ENUM> {System.out.println("ENUM " + t.image);}
+        | t = <EXTENDS> {System.out.println("EXTENDS " + t.image);}
+        | t = <FINAL> {System.out.println("FINAL " + t.image);}
+        | t = <FINALLY> {System.out.println("FINALLY " + t.image);}
+        | t = <FLOAT> {System.out.println("FLOAT " + t.image);}
+        | t = <FOR> {System.out.println("FOR " + t.image);}
+        | t = <GOTO> {System.out.println("GOTO " + t.image);}
+        | t = <IF> {System.out.println("IF " + t.image);}
+        | t = <IMPLEMENTS> {System.out.println("IMPLEMENTS " + t.image);}
+        | t = <IMPORT> {System.out.println("IMPORT " + t.image);}
+        | t = <INSTANCEOF> {System.out.println("INSTANCEOF " + t.image);}
+        | t = <INT> {System.out.println("INT " + t.image);}
+        | t = <INTERFACE> {System.out.println("INTERFACE " + t.image);}
+        | t = <LONG> {System.out.println("LONG " + t.image);}
+        | t = <NATIVE> {System.out.println("NATIVE " + t.image);}
+        | t = <NEW> {System.out.println("NEW " + t.image);}
+        | t = <PACKAGE> {System.out.println("PACKAGE " + t.image);}
+        | t = <PRIVATE> {System.out.println("PRIVATE " + t.image);}
+        | t = <PROTECTED> {System.out.println("PROTECTED " + t.image);}
+        | t = <PUBLIC> {System.out.println("PUBLIC " + t.image);}
+        | t = <RETURN> {System.out.println("RETURN " + t.image);}
+        | t = <SHORT> {System.out.println("SHORT " + t.image);}
+        | t = <STATIC> {System.out.println("STATIC " + t.image);}
+        | t = <STRICTFP> {System.out.println("STRICTFP " + t.image);}
+        | t = <SUPER> {System.out.println("SUPER " + t.image);}
+        | t = <SWITCH> {System.out.println("SWITCH " + t.image);}
+        | t = <SYNCHRONIZED> {System.out.println("SYNCHRONIZED " + t.image);}
+        | t = <THIS> {System.out.println("THIS " + t.image);}
+        | t = <THROW> {System.out.println("THROW " + t.image);}
+        | t = <THROWS> {System.out.println("THROWS " + t.image);}
+        | t = <TRANSIENT> {System.out.println("TRANSIENT " + t.image);}
+        | t = <TRY>  {System.out.println("TRY " + t.image);}
+        | t = <VOID> {System.out.println("VOID " + t.image);}
+        | t = <VOLATILE> {System.out.println("VOLATILE " + t.image);}
+        | t = <WHILE> {System.out.println("WHILE " + t.image);}
+        | t = <YIELD> {System.out.println("YIELD " + t.image);}
+        | t = <TRUE> {System.out.println("TRUE " + t.image);}
+        | t = <FALSE> {System.out.println("FALSE " + t.image);}
+        | t = <NULL> {System.out.println("NULL " + t.image);}
+        | t = <ID> {System.out.println("ID " + t.image);}
+        | t = <DECIMAL> {System.out.println("DECIMAL " + t.image);}
+        | t = <HEXADECIMAL> {System.out.println("HEXADECIMAL " + t.image);}
+        | t = <OCTAL> {System.out.println("OCTAL " + t.image);}
+        | t = <BINARY> {System.out.println("BINARY " + t.image);}
+        | t = <FLOAT_LITERAL> {System.out.println("FLOAT_LITERAL " + t.image);}
+        | t = <STRING> {System.out.println("STRING " + t.image);}
+        | t = <CHAR_LITERAL> {System.out.println("CHAR_LITERAL " + t.image);}
+        | t = <ASSIGN> {System.out.println("ASSIGN " + t.image);}
+        | t = <PLUS> {System.out.println("PLUS " + t.image);}
+        | t = <MINUS> {System.out.println("MINUS " + t.image);}
+        | t = <STAR> {System.out.println("STAR " + t.image);}
+        | t = <SLASH> {System.out.println("SLASH " + t.image);}
+        | t = <MOD> {System.out.println("MOD " + t.image);}
+        | t = <EQ>  {System.out.println("EQ " + t.image);}
+        | t = <NEQ> {System.out.println("NEQ " + t.image);}
+        | t = <GT> {System.out.println("GT " + t.image);}
+        | t = <LT> {System.out.println("LT " + t.image);}
+        | t = <GEQ> {System.out.println("GEQ " + t.image);}
+        | t = <LEQ> {System.out.println("LEQ " + t.image);}
+        | t = <LOGIC_AND> {System.out.println("LOGIC_AND " + t.image);}
+        | t = <LOGIC_OR> {System.out.println("LOGIC_OR " + t.image);}
+        | t = <EXCLAMATION> {System.out.println("EXCLAMATION " + t.image);}
+        | t = <TILDE> {System.out.println("TILDE " + t.image);}
+        | t = <QUESTION> {System.out.println("QUESTION " + t.image);}
+        | t = <COLON> {System.out.println("COLON " + t.image);}
+        | t = <PLUS_ASSIGN> {System.out.println("PLUS_ASSIGN " + t.image);}
+        | t = <MINUS_ASSIGN> {System.out.println("MINUS_ASSIGN " + t.image);}
+        | t = <STAR_ASSIGN> {System.out.println("STAR_ASSIGN " + t.image);}
+        | t = <SLASH_ASSIGN> {System.out.println("SLASH_ASSIGN " + t.image);}
+        | t = <MOD_ASSIGN> {System.out.println("MOD_ASSIGN " + t.image);}
+        | t = <BIT_AND> {System.out.println("BIT_AND " + t.image);}
+        | t = <BIT_OR> {System.out.println("BIT_OR " + t.image);}
+        | t = <BIT_XOR> {System.out.println("BIT_XOR " + t.image);}
+        | t = <BIT_AND_ASSIGN> {System.out.println("BIT_AND_ASSIGN " + t.image);}
+        | t = <BIT_OR_ASSIGN> {System.out.println("BIT_OR_ASSIGN " + t.image);}
+        | t = <BIT_XOR_ASSIGN> {System.out.println("BIT_XOR_ASSIGN " + t.image);}
+        | t = <LSHIFT> {System.out.println("LSHIFT " + t.image);}
+        | t = <RSHIFT> {System.out.println("RSHIFT " + t.image);}
+        | t = <URSHIFT> {System.out.println("URSHIFT " + t.image);}
+        | t = <LSHIFT_ASSIGN> {System.out.println("LSHIFT_ASSIGN " + t.image);}
+        | t = <RSHIFT_ASSIGN> {System.out.println("RSHIFT_ASSIGN " + t.image);}
+        | t = <URSHIFT_ASSIGN> {System.out.println("URSHIFT_ASSIGN " + t.image);}
+        | t = <INC> {System.out.println("INC " + t.image);}
+        | t = <DEC> {System.out.println("DEC " + t.image);}
+        | t = <ARROW> {System.out.println("ARROW " + t.image);}
+        | t = <LPAR> {System.out.println("LPAR " + t.image);}
+        | t = <RPAR> {System.out.println("RPAR " + t.image);}
+        | t = <LBRACE> {System.out.println("LBRACE " + t.image);}
+        | t = <RBRACE> {System.out.println("RBRACE " + t.image);}
+        | t = <LBRACK> {System.out.println("LBRACK " + t.image);}
+        | t = <RBRACK> {System.out.println("RBRACK " + t.image);}
+        | t = <SEMICOLON> {System.out.println("SEMICOLON " + t.image);}
+        | t = <COMMA> {System.out.println("COMMA " + t.image);}
+        | t = <DOT> {System.out.println("DOT " + t.image);}
+        | t = <VARARGS> {System.out.println("VARARGS " + t.image);}
+        | t = <AT> {System.out.println("AT " + t.image);}
+        | t = <DOBL_COLON> {System.out.println("DOBL_COLON " + t.image);}
+        | t = <CLASS_TYPE> {System.out.println("CLASS_TYPE " + t.image);}
+    )*
+
+    <EOF> {System.out.println("$ $");}
+}

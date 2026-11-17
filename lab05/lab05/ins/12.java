@@ -1,0 +1,9 @@
+class Principal {
+    public static void F12() {
+        int x = 5;
+        {
+            int x = 10;
+            x = x + 1;
+        }
+    }
+}

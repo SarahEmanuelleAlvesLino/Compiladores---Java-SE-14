@@ -1,0 +1,16 @@
+# Ignora tudo...
+/*
+# ...menos estas duas pastas e o próprio .gitignore
+!/LAB04/
+!/lab05/
+!/.gitignore
+!/README.md
+
+# Arquivos gerados pelo Java e pelas IDEs (não vão para o GitHub)
+*.class
+bin/
+out/
+target/
+.idea/
+.vscode/
+*.iml

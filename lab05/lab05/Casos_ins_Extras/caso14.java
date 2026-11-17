@@ -1,0 +1,14 @@
+class Principal {
+    public static int motorDeBusca(int chave) {
+        int chaveBusca;
+        chaveBusca = chave;
+        while (iterarDados()) {
+            if (comparar(chaveBusca, obterChaveAtual()) == 0) {
+                while (extrairMetadados(chaveBusca)) {
+                    chaveBusca = incrementarChave(chaveBusca, calcularSalto(chaveBusca));
+                }
+                return formatarResultado(chaveBusca);
+            }
+        }
+    }
+}
