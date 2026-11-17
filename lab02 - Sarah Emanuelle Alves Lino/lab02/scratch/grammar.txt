@@ -1,0 +1,84 @@
+Program -> ClassDecls
+ClassDecls -> ClassDecl ClassDecls | ''
+ClassDecl -> CLASS ID LBRACE MemberDecls RBRACE
+MemberDecls -> MemberDecl MemberDecls | ''
+MemberDecl -> Modifiers MemberBody
+Modifiers -> Modifier Modifiers | ''
+Modifier -> PUBLIC | PRIVATE | PROTECTED | STATIC
+
+MemberBody -> BasicType FieldOrMethod | ID ArraySuffix ConstructorOrFieldOrMethod
+
+ConstructorOrFieldOrMethod -> LPAR Params RPAR Block | ID MethodOrFieldDecl
+MethodOrFieldDecl -> LPAR Params RPAR Block | FieldRest
+FieldOrMethod -> ID MethodOrFieldDecl
+
+FieldRest -> VarDeclaratorRest SEMICOLON
+VarDeclaratorRest -> COMMA ID VarDeclaratorRest | ''
+
+BasicType -> INT ArraySuffix | DOUBLE ArraySuffix | BOOLEAN ArraySuffix | LONG ArraySuffix | VOID ArraySuffix
+ArraySuffix -> LBRACK RBRACK ArraySuffix | ''
+
+Params -> ParamList | ''
+ParamList -> Type ID ParamRest
+ParamRest -> COMMA Type ID ParamRest | ''
+
+Type -> ID ArraySuffix | INT ArraySuffix | DOUBLE ArraySuffix | BOOLEAN ArraySuffix | LONG ArraySuffix | VOID ArraySuffix
+
+Block -> LBRACE Stmts RBRACE
+Stmts -> Stmt Stmts | ''
+Stmt -> Block | IfStmt | WhileStmt | ForStmt | ReturnStmt | ExprStmt | VarDeclStmt | EmptyStmt
+
+IfStmt -> IF LPAR Expr RPAR Stmt ElseOpt
+ElseOpt -> ELSE Stmt | ''
+WhileStmt -> WHILE LPAR Expr RPAR Stmt
+ForStmt -> FOR LPAR ForInit SEMICOLON ExprOpt SEMICOLON ForUpdate RPAR Stmt
+ForInit -> VarDecl | ExprList | ''
+ForUpdate -> ExprList | ''
+
+ReturnStmt -> RETURN ExprOpt SEMICOLON
+ExprOpt -> Expr | ''
+ExprStmt -> Expr SEMICOLON
+EmptyStmt -> SEMICOLON
+
+VarDeclStmt -> VarDecl SEMICOLON
+VarDecl -> Type VarDeclaratorList
+VarDeclaratorList -> ID VarInitOpt VarDeclaratorListRest
+VarDeclaratorListRest -> COMMA ID VarInitOpt VarDeclaratorListRest | ''
+VarInitOpt -> ASSIGN InitExpr | ''
+InitExpr -> Expr | ArrayInit
+
+ArrayInit -> LBRACE InitExprList RBRACE
+InitExprList -> InitExpr InitExprListRest | ''
+InitExprListRest -> COMMA InitExprList | ''
+
+ExprList -> Expr ExprListRest
+ExprListRest -> COMMA ExprList | ''
+
+Expr -> AssignExpr
+AssignExpr -> LogOrExpr | LogOrExpr AssignOp AssignExpr
+AssignOp -> ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN
+
+LogOrExpr -> LogAndExpr | LogOrExpr LOGIC_OR LogAndExpr
+LogAndExpr -> EqExpr | LogAndExpr LOGIC_AND EqExpr
+
+EqExpr -> RelExpr | EqExpr EqOp RelExpr
+EqOp -> EQ | NEQ
+
+RelExpr -> AddExpr | RelExpr RelOp AddExpr
+RelOp -> LT | LEQ | GT | GEQ
+
+AddExpr -> MultExpr | AddExpr AddOp MultExpr
+AddOp -> PLUS | MINUS
+
+MultExpr -> UnaryExpr | MultExpr MultOp UnaryExpr
+MultOp -> STAR | SLASH | MOD
+
+UnaryExpr -> UnaryOp UnaryExpr | PrimaryExpr
+UnaryOp -> PLUS | MINUS | EXCLAMATION | INC | DEC
+
+PrimaryExpr -> BaseExpr | PrimaryExpr LBRACK Expr RBRACK | PrimaryExpr DOT ID | PrimaryExpr LPAR Args RPAR | PrimaryExpr INC | PrimaryExpr DEC
+
+BaseExpr -> LPAR Expr RPAR | THIS | DECIMAL | FLOAT_LITERAL | STRING | NULL | TRUE | FALSE | ID | NEW AllocExpr 
+AllocExpr -> Type AllocExprRest
+AllocExprRest -> LBRACK Expr RBRACK | LPAR Args RPAR
+Args -> ExprList | ''

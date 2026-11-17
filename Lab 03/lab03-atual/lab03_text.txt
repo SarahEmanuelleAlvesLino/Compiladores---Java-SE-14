@@ -1,0 +1,235 @@
+Você deve:
+• Fazer o trabalho individualmente;
+• Enviar um arquivo .zip contendo todos os arquivos necessários para
+rodar o analisador semântico em cima da fatia de inida da sua
+gramática;
+• Realizar os envios SOMENTE pelo Classroom, até 23/05/2026.
+Adpate o programa anexo para que o programa inal faça a an lise sem ntica de
+uma funç o na sua linguagem. Seu programa inal deve recebendo um arquivo de
+programa escrito na sua linguagem sorteada, gerar um objeto em mem ria que
+descreve a funç o (tal como pode ser visto no exemplo em src/src-gram7/
+Funcao.hpp). Este objeto dever ser tratado pela funç o calcula_retorno. Esta
+funç o deve simular uma execuç o da funç o e retornar o ltimo valor atribu do
+no ltimo comando.
+Para simpli icar esta fase, seu programa deve se restringir a um subconjunto da
+sua linguagem. Este subconjunto deve compreender as seguintes estruturas:
+• Declaraç o de funç o, com par metros e corpo de funç o
+• Declaraç o de vari veis, com o tipos restritos a pelo menos:
+o um tipo inteiro
+o um tipo ponto lutuante
+o um tipo booleano ou seu substituto na linguagem.
+• Bloco de comandos, com poss vel declaraç o de novas vari veis, caso sua
+linguagem permita.
+• Comando de atribuiç o
+• Express es com operadores aritm ticos, incluindo + - * / % , vari veis,
+n meros inteiros, n meros ponto lutuante e booleanos.
+• Express es com operadores relacionais, incluindo “<“, “<=“, “>”, ">=" e
+“==", “!=", podendo incluir outros
+• Express es com operadores l gicos, incluindo &&, || e ! (e, ou e n o).
+• IF-THEN-ELSE
+• WHILE, podendo incluir FOR, DO-WHILE e outros.
+Seu analisador deve apresentar mensagem de erros se os tipos dos operandos de
+algum operador forem incompat veis. Por exemplo, deve haver um erro se for
+feito "! ponto lutuante". Tamb m deve haver erro para (booleano < inteiro) e
+para (inteiro || ponto lutuante), caso sua linguagem o faça. Aqui voc deve gerar
+erro sempre que sua linguagem o izer.
+Seu analisador deve fazer convers es de tipos coerentemente com as regras da
+sua linguagem. Por exemplo, em C caso seja feito uma soma de inteiro e ponto
+lutuante, o resultado um ponto lutuante.
+
+í
+
+â
+
+ó
+
+á
+
+ê
+
+ã
+
+í
+
+á
+
+ú
+
+á
+
+ã
+
+ã
+
+f
+
+f
+
+ú
+
+f
+
+ã
+
+ã
+
+é
+
+õ
+
+f
+
+f
+
+f
+
+í
+
+á
+
+ã
+
+é
+
+â
+
+í
+
+ó
+
+ã
+
+f
+
+é
+
+ã
+
+ó
+
+ã
+
+ú
+
+á
+
+ã
+
+f
+
+f
+
+ê
+
+f
+
+ã
+
+ã
+
+ã
+
+õ
+
+õ
+
+õ
+
+ã
+
+f
+
+â
+
+ú
+
+No inal, voc deve testar o seu analisador passando exemplos de listas de
+par metros para sua funç o e imprimindo o ltimo valor atribu do. Se o valor a
+ser impresso for booleano, seu programa deve imprimir "true" ou "false". Se o
+
+ú
+
+f
+
+Enunciado Laborat rio 03 de Compiladores.
+Entrega 23/05/2026
+
+valor for ponto lutuante, ele deve imprimir o n mero com 2 casas decimais. Se o
+n mero for inteiro, ele deve ser impresso da forma usual (decimal).
+Note que foi feito um exemplo de convers o para objeto do tipo Funcao a partir
+de uma linguagem restrita a inteiros descrita no arquivo gramatica.conf. Voc
+deve fazer a sua convers o a partir da declaraç o de uma funç o na sua
+linguagem, com as restriç es acima.
+NOTA: Consertei o parser de gram tica. Agora somente deve ser usado o
+gramatica9.site e n o mais o gramatica.conf.
+Use make run para rodar.
+Voc deve criar um diret rio ins/ em lab3-atual. Voc deve converter cada um
+dos exemplos de c digo C, nomeado X.c por exemplo, para sua linguagem,
+obtendo X.ling. Em seguida, a fase 1 l xica deve ser rodada sobre o c digo X.ling
+do exemplo e o arquivo de tokens X.tokens criado. Em seguida, exemplos de
+par metros devem ser passados e descritos em um arquivo de nome X.params. O
+resultado da execuç o do make run sobre X.tokens com os par metros de
+X.params deve ser colocado na sa da X.saida. Todos estes arquivos devem ser
+colocados no diret rio ins/.
+
+ê
+
+á
+
+ã
+
+ó
+
+â
+
+ó
+
+ê
+
+ã
+
+ú
+
+ã
+
+ã
+
+á
+
+é
+
+í
+
+ã
+
+õ
+
+ó
+
+ó
+
+ã
+
+ê
+
+ó
+
+ã
+
+ó
+
+f
+
+ã
+
+ê
+
+â
+
+ú
+
+Para a submiss o voc deve remover os arquivos compilados (.o e execut veis) e
+comprimir todo o diret rio com sua soluç o e com o diret rio ins/ e submeter
+somente este .zip.
+
+
